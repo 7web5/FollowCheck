@@ -6,7 +6,7 @@ FollowCheck is a static website. **Your file is read only in your browser. It is
 
 ## How it works
 
-1. Request your data from Instagram (Accounts Center → Your information and permissions → Download your information). Choose **Followers and following**, **All time** and **JSON**.
+1. Request your data from Instagram (Accounts Center → Your information and permissions → Export your information). Choose **Followers and following**, **All time** and **JSON**.
 2. Open FollowCheck and choose the .zip, or several .zip files if your download came in parts.
 3. FollowCheck reads the archive's table of contents, opens only the followers and following lists, keeps only the usernames, and shows three lists: not following back, mutual followers, and you don't follow back.
 
