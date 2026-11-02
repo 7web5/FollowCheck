@@ -42,7 +42,7 @@ const FORBIDDEN = [
 // link, our own domain placeholder, and XML namespaces (never fetched).
 const ALLOWED_URLS = [
   /^https:\/\/www\.instagram\.com\/$/,
-  /^https:\/\/github\.com\/OWNER\/followcheck$/,
+  /^https:\/\/github\.com\/7web5\/FollowCheck$/,
   /^https:\/\/followcheck\.example\//,
   /^http:\/\/www\.w3\.org\/2000\/svg$/,
   /^http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9$/,

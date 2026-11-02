@@ -76,7 +76,7 @@ There are no runtime dependencies. `package.json` lists development tools only.
    - Leave **Zaraz** and any other script injection off.
 
    The Content-Security-Policy would block injected scripts anyway, but turning them off keeps the console clean.
-6. Replace `followcheck.example` with your real domain in `public/index.html`, `public/privacy.html`, `public/robots.txt` and `public/sitemap.xml`, and replace `OWNER` in the "Source code" links.
+6. Replace `followcheck.example` with your real domain in `public/index.html`, `public/privacy.html`, `public/robots.txt` and `public/sitemap.xml`.
 7. Check the deployed headers:
 
    ```bash
