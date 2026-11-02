@@ -40,11 +40,11 @@ const FORBIDDEN = [
 ];
 
 // Allowed non-local URLs: the Instagram profile link, the footer's source code
-// link, our own domain placeholder, and XML namespaces (never fetched).
+// link, our own domain, and XML namespaces (never fetched).
 const ALLOWED_URLS = [
   /^https:\/\/www\.instagram\.com\/$/,
   /^https:\/\/github\.com\/7web5\/FollowCheck$/,
-  /^https:\/\/followcheck\.example\//,
+  /^https:\/\/followcheck-zeta\.vercel\.app\//,
   /^http:\/\/www\.w3\.org\/2000\/svg$/,
   /^http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9$/,
   /^https:\/\/developers\.cloudflare\.com\/pages\/configuration\/headers\/$/,

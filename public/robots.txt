@@ -1,5 +1,5 @@
 User-agent: *
 Allow: /
 
-# TODO(owner): replace followcheck.example with the real domain.
-Sitemap: https://followcheck.example/sitemap.xml
+# If you add a custom domain, replace followcheck-zeta.vercel.app.
+Sitemap: https://followcheck-zeta.vercel.app/sitemap.xml

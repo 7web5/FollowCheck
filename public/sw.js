@@ -2,7 +2,7 @@
 // never sees the user's file, their usernames or their results.
 
 // Bump the version whenever any file below changes.
-const VERSION = 'v5';
+const VERSION = 'v6';
 const CACHE = `followcheck-${VERSION}`;
 
 const FILES = [

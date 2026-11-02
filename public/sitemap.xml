@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- TODO(owner): replace followcheck.example with the real domain. -->
+<!-- If you add a custom domain, replace followcheck-zeta.vercel.app. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://followcheck.example/</loc></url>
-  <url><loc>https://followcheck.example/privacy</loc></url>
+  <url><loc>https://followcheck-zeta.vercel.app/</loc></url>
+  <url><loc>https://followcheck-zeta.vercel.app/privacy</loc></url>
 </urlset>

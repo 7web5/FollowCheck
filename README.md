@@ -88,7 +88,7 @@ If you move hosts, the privacy page names the host, so update it too.
    - Leave **Zaraz** and any other script injection off.
 
    The Content-Security-Policy would block injected scripts anyway, but turning them off keeps the console clean.
-6. Replace `followcheck.example` with your real domain in `public/index.html`, `public/privacy.html`, `public/robots.txt` and `public/sitemap.xml`.
+6. Replace `followcheck-zeta.vercel.app` with your domain in `public/index.html`, `public/privacy.html`, `public/robots.txt` and `public/sitemap.xml`.
 7. Check the deployed headers:
 
    ```bash
