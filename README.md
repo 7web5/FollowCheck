@@ -63,7 +63,19 @@ sample/            An invented Instagram download
 
 There are no runtime dependencies. `package.json` lists development tools only.
 
-## Deploy to Cloudflare Pages
+## Deploy to Vercel (current host)
+
+`vercel.json` serves `public/` with no install or build step, uses clean URLs (`/privacy`) and sends the same security headers as `public/_headers`. A test fails if the two files ever differ. Vercel's docs don't say which rule wins when two rules set the same header, so the page Content-Security-Policy rule excludes `/sw.js`, and `/sw.js` gets its own policy with `connect-src 'self'`. `.vercelignore` uploads only `public/` and `vercel.json`.
+
+```bash
+npx vercel deploy --prod
+```
+
+Or connect the GitHub repository in the Vercel dashboard so every push to `main` deploys. Keep Vercel Web Analytics and Speed Insights off. Preview deployments may inject the Vercel Toolbar, which the Content-Security-Policy blocks, so check the console on production URLs.
+
+If you move hosts, the privacy page names the host, so update it too.
+
+## Deploy to Cloudflare Pages (alternative)
 
 1. Push this repository to GitHub and make it public, so anyone can inspect the code.
 2. In the Cloudflare dashboard, open **Workers & Pages → Create → Pages → Connect to Git** and pick the repository.

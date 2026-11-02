@@ -5,6 +5,7 @@ import assert from 'node:assert/strict';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, relative, extname, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { parseHeaders, headersFor } from '../tools/serve.mjs';
 
 const PUBLIC = fileURLToPath(new URL('../public/', import.meta.url));
 const CHECKED = new Set(['.html', '.js', '.css', '.webmanifest', '.xml', '.svg']);
@@ -87,6 +88,22 @@ test('the service worker precaches every file it needs and only site files', () 
   }
   for (const module of ['/app.js', '/core/zip.js', '/core/extract.js', '/core/analyze.js', '/app.css']) {
     assert.ok(cached.includes(module), `${module} is not precached`);
+  }
+});
+
+test('vercel.json sends exactly the same headers as _headers', () => {
+  const vercel = JSON.parse(readFileSync(new URL('../vercel.json', import.meta.url), 'utf8'));
+  const rules = parseHeaders(readFileSync(join(PUBLIC, '_headers'), 'utf8'));
+  for (const path of ['/', '/privacy', '/app.js', '/core/zip.js', '/sw.js', '/icons/icon-192.png', '/sw.json']) {
+    const sent = {};
+    for (const rule of vercel.headers) {
+      if (!new RegExp(`^${rule.source}$`).test(path)) continue;
+      for (const { key, value } of rule.headers) {
+        assert.ok(!(key in sent), `${path}: ${key} is set by two rules, and Vercel's precedence is undocumented`);
+        sent[key] = value;
+      }
+    }
+    assert.deepEqual(sent, headersFor(rules, path), path);
   }
 });
 
