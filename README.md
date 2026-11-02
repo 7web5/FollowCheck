@@ -106,6 +106,16 @@ Honest limits, also stated on the privacy page:
 - JavaScript can't guarantee memory is forensically erased.
 - You have to trust the code the site serves. The public repository and the airplane-mode test let you check.
 
+## Later
+
+Not built yet. Add these only when requested:
+
+- **TikTok support.** TikTok's data download has following and followers lists with usernames, so the comparison works unchanged. The work: detect which app a ZIP came from, add a TikTok list reader with its own allowlist, and switch the wording and profile links per app. TikTok has changed the file's key names over time, and it offers JSON and TXT versions. Build the reader against a real TikTok download (JSON format), not just published examples. Instagram behavior must not change.
+- **Facebook: probably not.** Facebook friends are always mutual, so "not following back" applies only to followers and following. Facebook's download lists people by display name, not username, so people with the same name collide, renamed people look like unfollows, and profiles can't be linked. Build it only if results are clearly labeled as approximate.
+- CSV export, with a warning that it creates a separate copy of the lists.
+- Comparing two downloads to find unfollowers and new followers.
+- Native iOS or Android apps.
+
 ## Fonts
 
 Bricolage Grotesque and Atkinson Hyperlegible Next are used under the SIL Open Font License 1.1. The license texts are in `public/fonts/`.
