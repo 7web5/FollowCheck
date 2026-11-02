@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FollowCheck: see who doesn't follow you back</title>
+  <meta name="description" content="Compare your Instagram followers and following using your own data download. No login, no uploads.">
+  <!-- TODO(owner): replace followcheck.example with the real domain here, in privacy.html, robots.txt and sitemap.xml. -->
+  <link rel="canonical" href="https://followcheck.example/">
+  <meta name="theme-color" content="#6a2cf0">
+  <meta name="color-scheme" content="light dark">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="FollowCheck">
+  <meta property="og:title" content="FollowCheck: see who doesn't follow you back">
+  <meta property="og:description" content="Compare your Instagram followers and following using your own data download. No login, no uploads.">
+  <meta property="og:url" content="https://followcheck.example/">
+  <meta property="og:image" content="https://followcheck.example/icons/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Two overlapping circles, blue and marigold, with a green overlap.">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/icons/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/icons/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="preload" href="/fonts/bricolage-grotesque-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/app.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <a class="wordmark" href="/"><img src="/icons/favicon.svg" alt="" width="28" height="28">FollowCheck</a>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section id="start-screen" class="screen" aria-labelledby="headline">
+      <h1 id="headline" class="headline">See who follows you <span class="headline-accent">back.</span></h1>
+
+      <div id="marquee" class="marquee">
+        <p class="visually-hidden">No login. No uploads. Your file stays on your device. Works offline. Nothing saved. No tracking.</p>
+        <div class="marquee-viewport" aria-hidden="true">
+          <div class="marquee-track">
+            <ul class="marquee-group">
+              <li>No login</li><li>No uploads</li><li>Stays on your device</li><li>Works offline</li><li>Nothing saved</li><li>No tracking</li>
+              <li>No login</li><li>No uploads</li><li>Stays on your device</li><li>Works offline</li><li>Nothing saved</li><li>No tracking</li>
+            </ul>
+            <ul class="marquee-group">
+              <li>No login</li><li>No uploads</li><li>Stays on your device</li><li>Works offline</li><li>Nothing saved</li><li>No tracking</li>
+              <li>No login</li><li>No uploads</li><li>Stays on your device</li><li>Works offline</li><li>Nothing saved</li><li>No tracking</li>
+            </ul>
+          </div>
+        </div>
+        <button id="marquee-toggle" class="marquee-toggle" type="button" aria-label="Pause moving words">Pause</button>
+      </div>
+
+      <div id="plate" class="plate">
+        <p class="plate-side plate-following">You follow them</p>
+        <div class="plate-center">
+          <button id="choose" class="button button-primary" type="button">Choose your Instagram file</button>
+          <p class="drop-hint">or drop the .zip here</p>
+          <input id="file-input" class="visually-hidden" type="file" accept=".zip,application/zip,application/x-zip-compressed" multiple tabindex="-1" aria-hidden="true">
+        </div>
+        <p class="plate-side plate-followers">They follow you</p>
+      </div>
+
+      <p id="error" class="error" role="alert"></p>
+
+      <div class="info">
+        <section aria-labelledby="how-heading">
+          <h2 id="how-heading">Get your file from Instagram</h2>
+          <ol class="steps">
+            <li>In Instagram, open Accounts Center, then <strong>Your information and permissions</strong>.</li>
+            <li>Choose <strong>Download your information</strong> and pick your account.</li>
+            <li>Select only <strong>Followers and following</strong>.</li>
+            <li>Set the date range to <strong>All time</strong> and the format to <strong>JSON</strong>.</li>
+            <li>When Meta says your file is ready, download the .zip. This can take a few minutes or a couple of days.</li>
+          </ol>
+        </section>
+
+        <section aria-labelledby="privacy-heading">
+          <h2 id="privacy-heading">What happens to your file</h2>
+          <ul class="promises">
+            <li>You never sign in to Instagram here.</li>
+            <li>Your file stays on your device. This site has no upload feature and no server to send it to.</li>
+            <li>Only your followers and following lists are opened. Messages, photos and everything else in the file stay unread.</li>
+            <li>Nothing is saved. Closing this page clears your results.</li>
+          </ul>
+          <p class="check"><strong>Check it yourself:</strong> Once this page has loaded, turn on airplane mode and choose your file. It still works.</p>
+        </section>
+      </div>
+    </section>
+
+    <section id="busy-screen" class="screen" aria-labelledby="busy-heading" hidden>
+      <h1 id="busy-heading" class="visually-hidden">Reading your file</h1>
+      <div class="busy-band" aria-hidden="true">
+        <span class="band-following"></span><span class="band-mutual"></span><span class="band-followers"></span>
+      </div>
+      <p id="status" class="status" role="status"></p>
+    </section>
+
+    <section id="results-screen" class="screen" aria-labelledby="results-heading" hidden>
+      <div class="results-head">
+        <h1 id="results-heading" class="results-heading" tabindex="-1">Your results</h1>
+        <button id="clear" class="button button-secondary" type="button">Clear results</button>
+      </div>
+
+      <ul id="warnings" class="warnings"></ul>
+
+      <figure id="chart" class="chart">
+        <div class="chart-graphic" aria-hidden="true">
+          <p id="chart-following" class="chart-label"></p>
+          <div id="chart-grid" class="chart-grid">
+            <span class="chart-line chart-line-following"></span>
+            <span class="chart-segment chart-segment-following"></span>
+            <span class="chart-segment chart-segment-mutual"></span>
+            <span class="chart-segment chart-segment-followers"></span>
+            <span class="chart-line chart-line-followers"></span>
+          </div>
+          <p id="chart-followers" class="chart-label chart-label-end"></p>
+        </div>
+        <figcaption id="chart-text" class="visually-hidden"></figcaption>
+      </figure>
+
+      <div class="tabs" role="tablist" aria-label="Lists">
+        <button id="tab-notFollowingBack" class="tab tab-following" role="tab" type="button" aria-selected="true" aria-controls="panel" tabindex="0">
+          <span class="tab-count" data-count></span><span class="tab-name">Not following back</span>
+        </button>
+        <button id="tab-mutual" class="tab tab-mutual" role="tab" type="button" aria-selected="false" aria-controls="panel" tabindex="-1">
+          <span class="tab-count" data-count></span><span class="tab-name">Mutual followers</span>
+        </button>
+        <button id="tab-notFollowedBack" class="tab tab-followers" role="tab" type="button" aria-selected="false" aria-controls="panel" tabindex="-1">
+          <span class="tab-count" data-count></span><span class="tab-name">You don't follow back</span>
+        </button>
+      </div>
+
+      <div id="panel" class="panel" role="tabpanel" aria-labelledby="tab-notFollowingBack">
+        <p id="list-description" class="list-description"></p>
+        <div class="search">
+          <label for="search-input">Search this list</label>
+          <input id="search-input" type="search" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="search">
+        </div>
+        <p id="list-note" class="list-note" role="status"></p>
+        <ul id="list" class="accounts"></ul>
+        <button id="more" class="button button-secondary more" type="button" hidden>Show 300 more</button>
+        <p id="opens-instagram" class="visually-hidden">Opens Instagram in a new tab</p>
+      </div>
+
+      <p class="footnote">These results show your lists on the day Instagram made your file. Recently deleted or deactivated accounts can appear as not following back.</p>
+    </section>
+  </main>
+
+  <dialog id="celebrate" class="celebrate" aria-labelledby="celebrate-title" aria-describedby="celebrate-detail">
+    <svg class="celebrate-art" viewBox="0 0 160 100" aria-hidden="true" focusable="false">
+      <defs><clipPath id="art-clip"><circle cx="62" cy="54" r="34"/></clipPath></defs>
+      <path class="art-spark" d="M18 14l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/>
+      <path class="art-spark" d="M142 10l2.5 5.5 5.5 2.5-5.5 2.5-2.5 5.5-2.5-5.5-5.5-2.5 5.5-2.5z"/>
+      <path class="art-spark" d="M148 74l2 4.5 4.5 2-4.5 2-2 4.5-2-4.5-4.5-2 4.5-2z"/>
+      <circle class="art-left" cx="62" cy="54" r="34"/>
+      <circle class="art-right" cx="98" cy="54" r="34"/>
+      <circle class="art-overlap" cx="98" cy="54" r="34" clip-path="url(#art-clip)"/>
+      <circle class="art-face-light" cx="44" cy="48" r="4.5"/>
+      <circle class="art-face" cx="116" cy="48" r="4.5"/>
+      <path class="art-smile" d="M71 62q9 9 18 0"/>
+    </svg>
+    <p class="celebrate-kicker">Your results are ready</p>
+    <h2 id="celebrate-title"></h2>
+    <p id="celebrate-detail" class="celebrate-detail"></p>
+    <button id="celebrate-ok" class="button button-primary" type="button">See the list</button>
+  </dialog>
+
+  <footer class="site-footer">
+    <p>FollowCheck isn't affiliated with Instagram or Meta.</p>
+    <!-- TODO(owner): point "Source code" at the public repository. -->
+    <p><a href="/privacy">Privacy</a> <a href="https://github.com/OWNER/followcheck">Source code</a></p>
+  </footer>
+</body>
+</html>

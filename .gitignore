@@ -1,0 +1,10 @@
+node_modules/
+test-results/
+playwright-report/
+blob-report/
+.claude/settings.local.json
+
+# Never commit a real Instagram download. Only the invented sample is allowed.
+*.zip
+!sample/sample-instagram-export.zip
+real/

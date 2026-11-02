@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy: FollowCheck</title>
+  <meta name="description" content="How FollowCheck handles your Instagram data download: it reads the file in your browser and sends nothing anywhere.">
+  <link rel="canonical" href="https://followcheck.example/privacy">
+  <meta name="theme-color" content="#6a2cf0">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="/icons/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/icons/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <a class="wordmark" href="/"><img src="/icons/favicon.svg" alt="" width="28" height="28">FollowCheck</a>
+  </header>
+
+  <main id="main" class="prose" tabindex="-1">
+    <h1>Privacy</h1>
+    <p>FollowCheck compares the followers and following lists in the data download you get from Instagram. This page explains what happens to that file, in plain language.</p>
+
+    <h2>What happens to your file</h2>
+    <ul>
+      <li>Your browser reads the file on your device. FollowCheck has no upload feature, no server code, no database and no account system, so there is nowhere for your file to go.</li>
+      <li>Only the followers and following lists inside the file are opened. Messages, photos and everything else stay unread, and their names are not kept.</li>
+      <li>From those two lists, only the usernames are kept. Dates, links and everything else are discarded.</li>
+      <li>Your results exist only in the open page. Clear results removes them, and so does closing or leaving the page. Nothing is saved for your next visit.</li>
+      <li>The page's security policy forbids it from making network connections, so it couldn't send your data even if it tried.</li>
+    </ul>
+
+    <h2>What FollowCheck collects</h2>
+    <p>Nothing of its own. There are no cookies, no analytics, no ads, no tracking pixels, no error reporting and no third-party scripts or fonts.</p>
+    <p>To work offline, your browser keeps a copy of the site's own files, such as its code, fonts and icons. That copy never contains your file or your results.</p>
+
+    <h2>What the hosting provider sees</h2>
+    <p>The site is hosted on Cloudflare Pages. Like any web host, Cloudflare sees normal visit logs when your browser downloads the site, such as your IP address, the pages requested and your browser type. It never receives your Instagram file, because that is never sent.</p>
+
+    <h2>Opening Instagram</h2>
+    <p>Each username links to that account on Instagram. Nothing is opened until you tap a name. When you do, Instagram opens in a new tab, and Instagram's own privacy policy applies there. FollowCheck tells Instagram nothing about where you came from.</p>
+
+    <h2>Honest limits</h2>
+    <ul>
+      <li>The hosting provider sees normal visit logs, such as IP addresses.</li>
+      <li>Other browser extensions you have installed may be able to read this page, including your results.</li>
+      <li>JavaScript can't guarantee that memory is forensically erased. Clearing releases your results, and the browser frees that memory in its own time.</li>
+      <li>You have to trust the code this site serves. The source code is public so anyone can inspect it, and you can check it yourself: once the page has loaded, turn on airplane mode and choose your file. It still works, because nothing needs to be sent.</li>
+    </ul>
+
+    <h2>Contact</h2>
+    <!-- TODO(owner): add a real contact method (email address or issue tracker) and remove the placeholder below. -->
+    <p class="todo">Contact details will be added here.</p>
+
+    <p><a href="/">Back to FollowCheck</a></p>
+  </main>
+
+  <footer class="site-footer">
+    <p>FollowCheck isn't affiliated with Instagram or Meta.</p>
+    <p><a href="/privacy" aria-current="page">Privacy</a> <a href="https://github.com/OWNER/followcheck">Source code</a></p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# TODO(owner): replace followcheck.example with the real domain.
+Sitemap: https://followcheck.example/sitemap.xml
