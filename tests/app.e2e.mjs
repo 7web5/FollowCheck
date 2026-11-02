@@ -108,7 +108,7 @@ test.describe('privacy', () => {
     const reached = [];
     await page.context().route('**/*', (route) => {
       const url = route.request().url();
-      if (url.startsWith('http://localhost')) return route.continue();
+      if (url.startsWith(new URL(page.url() === 'about:blank' ? testInfo.project.use.baseURL : page.url()).origin)) return route.continue();
       reached.push(url);
       return route.abort();
     });

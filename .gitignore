@@ -8,3 +8,6 @@ blob-report/
 *.zip
 !sample/sample-instagram-export.zip
 real/
+
+.vercel
+.env*
