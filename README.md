@@ -6,7 +6,7 @@ FollowCheck is a static website. **Your file is read only in your browser. It is
 
 ## How it works
 
-1. Request your data from Instagram (Accounts Center → Your information and permissions → Export your information). Choose **Followers and following** and **JSON**, with any date range. **All time** gives the most complete results.
+1. Request your data from Instagram (Accounts Center → Your information and permissions → Export your information). Choose **Followers and following**, **All time** (not just the last year) and **JSON**.
 2. Open FollowCheck and choose the .zip, or several .zip files if your download came in parts.
 3. FollowCheck reads the archive's table of contents, opens only the followers and following lists, keeps only the usernames, and shows three lists: not following back, mutual followers, and you don't follow back.
 
@@ -106,7 +106,8 @@ The service worker serves files from its cache first. Whenever you change anythi
 - **No upload path.** There is no backend, API, database or serverless function. The page's Content-Security-Policy sets `connect-src 'none'`, so the page can't make `fetch`, XHR, WebSocket or beacon requests, even to its own origin. Only the service worker may fetch, and only the site's own files.
 - **Reads as little as possible.** `core/zip.js` reads the archive with `File.slice()`. It reads the end record, then the central directory, then only the allowlisted entries: `followers.json`, `followers_N.json`, `following.json` and `following_N.json` in `followers_and_following/`, `connections/` or the archive root. Other filenames are looked at once and dropped. Other entries' bytes are never read, and a test proves it with a recording `Blob`.
 - **Safe decompression.** It uses the browser's `DecompressionStream('deflate-raw')`, counts real output bytes against a 256 MB limit, and checks each entry's CRC-32 and size. It rejects encrypted entries.
-- **Keeps only usernames.** Timestamps, links and display names are discarded during parsing.
+- **Keeps only usernames.** Profile links are read only to find usernames, and only the oldest follow date is kept, to warn about a short date range. Everything else is discarded during parsing.
+- **Errs toward "follows you".** Each entry is matched on every username it carries (`value`, `title`, profile link, `label_values` link), so an entry whose fields disagree is never reported as not following back. Skipped followers, missing parts and a followers list that only goes back about a year each show a warning.
 - **Memory only.** Results live in one variable. Clear results, or leaving the page (`pagehide`), empties it and the DOM. Nothing is written to cookies, `localStorage`, `sessionStorage`, IndexedDB, OPFS or the Cache API, and the service worker never sees user data.
 - **No third parties.** Fonts and icons are self-hosted. There are no analytics, ads, error reporting or CDNs. Usernames link to Instagram only when tapped, with `rel="noopener noreferrer"` and `Referrer-Policy: no-referrer`.
 - **No HTML injection.** Rows are built with `textContent`. There are no inline scripts or styles. The repository check enforces this.

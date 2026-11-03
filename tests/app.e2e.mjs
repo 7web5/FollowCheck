@@ -294,7 +294,21 @@ test.describe('import', () => {
       { name: 'followers_and_following/following.json', data: JSON.stringify({ relationships_following: [{ title: 'ana' }] }) },
     ]);
     await openResults(page, [zip]);
-    await expect(page.locator('#warnings li')).toHaveText(['2 entries in your followers list had no readable username and were left out.']);
+    await expect(page.locator('#warnings li')).toHaveText([
+      '2 entries in your followers list had no readable username and were left out. Because of this, some accounts may wrongly show as not following back.',
+    ]);
+  });
+
+  test('warns when the followers list only covers a short date range', async ({ page }) => {
+    const recent = Math.floor(Date.now() / 1000) - 60 * 24 * 60 * 60;
+    const zip = makeZip([
+      { name: 'connections/followers_and_following/followers_1.json', data: JSON.stringify([{ string_list_data: [{ value: 'ana', timestamp: recent }] }]) },
+      { name: 'connections/followers_and_following/following.json', data: JSON.stringify({ relationships_following: [{ title: 'ana' }, { title: 'bea' }] }) },
+    ]);
+    await openResults(page, [zip]);
+    await expect(page.locator('#warnings li')).toHaveCount(1);
+    await expect(page.locator('#warnings li')).toContainText('Your followers list only goes back to');
+    await expect(page.locator('#warnings li')).toContainText('may wrongly show as not following back');
   });
 
   const errorCases = [

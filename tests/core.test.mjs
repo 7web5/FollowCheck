@@ -98,7 +98,7 @@ describe('usernames', () => {
       { name: `${FOLDER}followers_1.json`, data: followers },
       { name: `${FOLDER}following.json`, data: followingJson(['ana']) },
     ]))]);
-    assert.deepEqual([...r.followers], ['ana']);
+    assert.deepEqual([...r.followers.keys()], ['ana']);
     assert.deepEqual(r.warnings, [{ type: 'skipped', list: 'followers', count: 3 }]);
   });
 
@@ -117,6 +117,76 @@ describe('usernames', () => {
       { name: `${FOLDER}following.json`, data: Buffer.concat([bom, Buffer.from(followingJson(['ana']))]) },
     ]));
     assert.deepEqual(r.mutual, ['ana']);
+  });
+});
+
+describe('never a false "not following back"', () => {
+  const zipOf = (followers, following) => makeZip([
+    { name: `${FOLDER}followers_1.json`, data: JSON.stringify(followers) },
+    { name: `${FOLDER}following.json`, data: JSON.stringify({ relationships_following: following }) },
+  ]);
+
+  test('matches an entry by its link when its title is a different name', async () => {
+    // Following shows "old_name" as the title, but the profile link is "ana".
+    const r = await run(zipOf(
+      [record('ana')],
+      [{ title: 'old_name', string_list_data: [{ href: 'https://www.instagram.com/_u/ana', timestamp: 1730000000 }] }],
+    ));
+    assert.deepEqual(r.notFollowingBack, []);
+    assert.deepEqual(r.mutual, ['old_name']);
+    assert.deepEqual(r.notFollowedBack, []);
+  });
+
+  test('matches on the follower side too', async () => {
+    const r = await run(zipOf(
+      [{ title: '', string_list_data: [{ value: 'shown_name', href: 'https://www.instagram.com/ana', timestamp: 1730000000 }] }],
+      [record('ana')],
+    ));
+    assert.deepEqual(r.notFollowingBack, []);
+    assert.deepEqual(r.notFollowedBack, []);
+  });
+
+  test('reads every item in string_list_data, not just the first', async () => {
+    const r = await run(zipOf(
+      [record('ana')],
+      [{ title: '', string_list_data: [{ value: 'first_name' }, { value: 'ana' }] }],
+    ));
+    assert.deepEqual(r.notFollowingBack, []);
+  });
+
+  test('matches through label_values links', async () => {
+    const r = await run(zipOf(
+      [record('ana', 'labels')],
+      [{ title: 'other', label_values: [{ label: 'Profil', href: 'https://www.instagram.com/ana/' }] }],
+    ));
+    assert.deepEqual(r.notFollowingBack, []);
+  });
+
+  test('accounts that truly differ still show as not following back', async () => {
+    const r = await run(zipOf([record('ana')], [record('bea'), record('ana')]));
+    assert.deepEqual(r.notFollowingBack, ['bea']);
+    assert.deepEqual(r.mutual, ['ana']);
+  });
+
+  test('warns when the followers list looks limited to a short date range', async () => {
+    const day = 24 * 60 * 60;
+    const now = 1_790_000_000;
+    const recent = [{ title: '', string_list_data: [{ value: 'ana', timestamp: now - 90 * day }] }];
+    const lists = await extractLists([blobOf(zipOf(recent, [record('ana')]))], { now });
+    assert.deepEqual(lists.warnings, [{ type: 'recent-range', list: 'followers', since: now - 90 * day }]);
+
+    const old = [{ title: '', string_list_data: [{ value: 'ana', timestamp: now - 900 * day }] }, ...recent];
+    const full = await extractLists([blobOf(zipOf(old, [record('ana')]))], { now });
+    assert.deepEqual(full.warnings, []);
+
+    const millis = [{ title: '', string_list_data: [{ value: 'ana', timestamp: (now - 90 * day) * 1000 }] }];
+    const ms = await extractLists([blobOf(zipOf(millis, [record('ana')]))], { now });
+    assert.equal(ms.warnings[0]?.since, now - 90 * day);
+  });
+
+  test('no date warning when follow dates are missing', async () => {
+    const lists = await extractLists([blobOf(zipOf([{ title: 'ana' }], [{ title: 'ana' }]))], { now: 1_790_000_000 });
+    assert.deepEqual(lists.warnings, []);
   });
 });
 

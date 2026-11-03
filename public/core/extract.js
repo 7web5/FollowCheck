@@ -86,6 +86,41 @@ export function usernameOf(record) {
   );
 }
 
+/**
+ * Returns { name, keys } where name is shown to the user and keys holds every
+ * username the record carries. Matching on all of them means a follower is
+ * never missed just because two fields of one entry disagree.
+ */
+export function accountOf(record) {
+  const name = usernameOf(record);
+  if (!name) return null;
+  const keys = new Set([name]);
+  const add = (key) => key && keys.add(key);
+  for (const item of Array.isArray(record.string_list_data) ? record.string_list_data : []) {
+    if (item === null || typeof item !== 'object') continue;
+    add(normalizeUsername(item.value));
+    add(fromLink(item.href));
+  }
+  add(normalizeUsername(record.title));
+  add(fromLabelValues(record.label_values));
+  return { name, keys };
+}
+
+// Follow dates are in seconds; accept milliseconds too.
+function timestampOf(value) {
+  if (typeof value !== 'number' || !Number.isFinite(value) || value <= 0) return null;
+  return value > 1e11 ? value / 1000 : value;
+}
+
+function oldestDateOf(record) {
+  let oldest = timestampOf(record.timestamp);
+  for (const item of Array.isArray(record.string_list_data) ? record.string_list_data : []) {
+    const t = item !== null && typeof item === 'object' ? timestampOf(item.timestamp) : null;
+    if (t !== null && (oldest === null || t < oldest)) oldest = t;
+  }
+  return oldest;
+}
+
 function recordsOf(data) {
   if (Array.isArray(data)) return data;
   if (data === null || typeof data !== 'object') return null;
@@ -94,7 +129,10 @@ function recordsOf(data) {
   return keys.flatMap((key) => data[key]);
 }
 
-/** Parses one list file. Returns { names, skipped }. Everything else is discarded. */
+/**
+ * Parses one list file. Returns { accounts: [{ name, keys }], skipped, oldest }
+ * where oldest is the earliest follow date in seconds. Everything else is discarded.
+ */
 export function parseList(bytes, list) {
   let data;
   try {
@@ -105,14 +143,20 @@ export function parseList(bytes, list) {
   }
   const records = recordsOf(data);
   if (!records) throw new ImportError('UNKNOWN_FORMAT', list);
-  const names = [];
+  const accounts = [];
   let skipped = 0;
+  let oldest = null;
   for (const record of records) {
-    const name = usernameOf(record);
-    if (name) names.push(name);
-    else skipped++;
+    const account = record !== null && typeof record === 'object' ? accountOf(record) : null;
+    if (!account) {
+      skipped++;
+      continue;
+    }
+    accounts.push(account);
+    const date = oldestDateOf(record);
+    if (date !== null && (oldest === null || date < oldest)) oldest = date;
   }
-  return { names, skipped };
+  return { accounts, skipped, oldest };
 }
 
 function missingParts(parts) {
@@ -124,22 +168,36 @@ function missingParts(parts) {
 }
 
 async function readList(parts, list, maxBytes) {
-  const names = new Set();
+  const accounts = new Map();
   let skipped = 0;
+  let oldest = null;
   for (const part of [...parts.keys()].sort((a, b) => a - b)) {
     const { file, entry } = parts.get(part);
     const parsed = parseList(await readEntry(file, entry, { maxBytes }), list);
-    for (const name of parsed.names) names.add(name);
+    for (const { name, keys } of parsed.accounts) {
+      const known = accounts.get(name);
+      if (known) for (const key of keys) known.add(key);
+      else accounts.set(name, keys);
+    }
     skipped += parsed.skipped;
+    if (parsed.oldest !== null && (oldest === null || parsed.oldest < oldest)) oldest = parsed.oldest;
   }
-  return { names, skipped };
+  return { accounts, skipped, oldest };
 }
+
+// A followers list whose oldest follow is this recent may come from a date
+// range shorter than All time, so older followers could be missing.
+const RECENT_RANGE_SECONDS = 400 * 24 * 60 * 60;
 
 /**
  * Reads the followers and following lists from the selected ZIP files.
- * Returns { followers: Set, following: Set, warnings: [...] }.
+ * Returns { followers, following, warnings } where each list is a
+ * Map of username to the set of every username its entry carries.
  */
-export async function extractLists(files, { onProgress = () => {}, maxEntryBytes = DEFAULT_MAX_ENTRY_BYTES } = {}) {
+export async function extractLists(
+  files,
+  { onProgress = () => {}, maxEntryBytes = DEFAULT_MAX_ENTRY_BYTES, now = Date.now() / 1000 } = {},
+) {
   try {
     onProgress('finding');
     const parts = { followers: new Map(), following: new Map() };
@@ -182,8 +240,11 @@ export async function extractLists(files, { onProgress = () => {}, maxEntryBytes
     for (const [list, result] of [['followers', followers], ['following', following]]) {
       if (result.skipped) warnings.push({ type: 'skipped', list, count: result.skipped });
     }
+    if (followers.oldest !== null && now - followers.oldest < RECENT_RANGE_SECONDS) {
+      warnings.push({ type: 'recent-range', list: 'followers', since: followers.oldest });
+    }
 
-    return { followers: followers.names, following: following.names, warnings };
+    return { followers: followers.accounts, following: following.accounts, warnings };
   } catch (error) {
     if (error instanceof ZipError) throw new ImportError(error.code);
     throw error;

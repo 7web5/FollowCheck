@@ -76,6 +76,7 @@ const ui = {
 };
 
 const number = new Intl.NumberFormat('en');
+const monthYear = new Intl.DateTimeFormat('en', { month: 'long', year: 'numeric', timeZone: 'UTC' });
 const count = (n, one, many) => `${number.format(n)} ${n === 1 ? one : many}`;
 
 // The only place results are kept. Clearing sets it back to null.
@@ -109,9 +110,15 @@ function warningText(warning) {
     const which = parts.length === 1 ? `Part ${parts[0]}` : `Parts ${parts.slice(0, -1).join(', ')} and ${parts.at(-1)}`;
     return `${which} of your ${list} ${parts.length === 1 ? 'is' : 'are'} missing, so these results are incomplete. If your download came in several parts, select all of them together.`;
   }
-  return warning.count === 1
+  if (warning.type === 'recent-range') {
+    return `Your followers list only goes back to ${monthYear.format(new Date(warning.since * 1000))}. If you picked a date range shorter than All time, people who followed you earlier are missing and may wrongly show as not following back. For complete results, request a new download with All time.`;
+  }
+  const skipped = warning.count === 1
     ? `1 entry in your ${list} had no readable username and was left out.`
     : `${number.format(warning.count)} entries in your ${list} had no readable username and were left out.`;
+  return warning.list === 'followers'
+    ? `${skipped} Because of this, some accounts may wrongly show as not following back.`
+    : skipped;
 }
 
 function supportsDeflateRaw() {
