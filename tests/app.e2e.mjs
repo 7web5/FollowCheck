@@ -506,9 +506,9 @@ test.describe('layout', () => {
   test('dark mode uses the dark palette', async ({ page }) => {
     await page.emulateMedia({ colorScheme: 'dark' });
     await page.goto('/');
-    expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe('rgb(18, 13, 31)');
+    expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe('rgb(20, 18, 28)');
     await page.emulateMedia({ colorScheme: 'light' });
-    expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe('rgb(251, 247, 245)');
+    expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe('rgb(255, 248, 231)');
   });
 
   test('reduced motion turns off every animation', async ({ page }) => {
